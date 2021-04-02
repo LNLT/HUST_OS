@@ -1,0 +1,26 @@
+安装QT：
+sudo chmod +x qt-opensource-linux-x64-5.9.9.run//添加执行权限
+sudo ./qt-opensource-linux-x64-5.9.9.run//执行安装程序
+安装时一路next，对于组件的选择可以自选，在此选择QT*等组件，以及tools
+安装完成后配置环境：
+路径可加可不加，一样可以打开
+sudo apt-get install libqt4-dev//安装GL库
+sudo apt-get install build-essential//安装此可以提供编译程序必须软件包的列表信息
+
+
+主机信息 进程 内存信息 其他
+主机名称：
+系统已启动时间：
+系统持续运行时间：
+系统版本号：
+cpu型号：
+cpu主频：
+
+进程数：
+
+
+在构造QFile的对象后，我们可以使用exists() 判断文件是否存在，使用remove() 删除一个文件。在进行实际的内容读写前，需调用open（）打开文件，读写结束后，要调用close()关闭文件，也可以写调用一下flush()，冲刷缓冲区。
+我们将QIODevice::Text传给了open()函数，该标志是用来告诉Qt将文件中的换行符由"\r\n"，转换成"\n"。
+
+
+

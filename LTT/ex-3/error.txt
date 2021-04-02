@@ -1,0 +1,14 @@
+/home/ltt/czxt/keshe/LTT/ex-3/adddriver.c:48:16: error: void value not ignored as it ought to be
+     int back = unregister_chrdev(driver_num, name);
+                ^~~~~~~~~~~~~~~~~
+scripts/Makefile.build:335: recipe for target '/home/ltt/czxt/keshe/LTT/ex-3/adddriver.o' failed
+
+返回值为int，但是报错
+
+linux/fs.h:2525:extern void __unregister_chrdev(unsigned int major, unsigned int baseminor,
+linux/fs.h:2527:extern void unregister_chrdev_region(dev_t, unsigned);
+linux/fs.h:2536:static inline void unregister_chrdev(unsigned int major, const char *name)
+linux/fs.h:2538:	__unregister_chrdev(major, 0, 256, name);
+linux 内核4.14.255里面的unregister_chrdev函数为void类型，没有返回值。
+
+
