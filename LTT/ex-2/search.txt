@@ -1,0 +1,62 @@
+系统调用表:
+系统调用表是linux内核中用于关联系统调用号以及其他相应服务例程入口地址的一张表。存放在/usr/src/linux-4.11.3/arch/x86/entry/syscalls/syscall_64.tbl 中，每个表项记录了某个系统调用的服务例程入口地址，以系统调用号为索引可以快速找到其服务例程。
+添加服务例程的原型声明:
+include/linux/syscalls.h
+系统调用服务例程:
+每个系统调用都对应一个内核服务例程来实现该系统调用的具体功能，其命名格式为sys_ 开头，如sys_read 通常存放在/usr/src/linux-4.11.3/kernel/sys.c 文件中。
+
+
+
+printk是内核态命令，在系统日志里面输出的，可通过dmesg命令显示出来，而printf就是用户态命令，在终端输出。
+编写函数两种方式：
+      1.SYSCALL_DEFINEx里面的x代表的是系统调用参数个数。sys_socket的宏定义为：
+  	asmlinkage long sys_socket(int, int, int);
+	SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol);
+      2.asmlinkage long sys_socket(int, int, int);
+
+asmlinkage long sys_world(void)
+{
+        printk("welcome to the world!");
+        return 0;
+}
+
+
+sys_open打开或创建文件
+open	sys_open
+close	sys_close
+read	sys_read
+write	sys_write
+
+void set_fs(mm_segment_t fs);
+该函数的作用是改变kernel对内存地址检查的处理方式，其实该函数的参数fs只有两个取值：USER＿DS，KERNEL＿DS，分别代表用户空间和内核空间，默认情况下，kernel取值为USER_DS，即对用户空间地址检查并做变换。那么要在这种对内存地址做检查变换的函数中使用内核空间地址，就需要使用set_fs(KERNEL_DS)进行设置。get_fs()一般也可能是宏定义，它的作用是取得当前的设置，这两个函数的一般用法为：
+在内核中使用有些系统调用（如打开，写文件等操作）需要使用get_fs,set_fs对他们进行保护。
+set_fs(get_ds())改变了用户空间的限制，即扩大了用户空间范围
+mm_segment_t old_fs;
+old_fs = get_fs();
+set_fs(KERNEL_DS);
+...... //与内存有关的操作
+
+set_fs(old_fs);
+asmlinkage long sys_mycopy(const char *file1,const char *file2){
+        int fd_in,fd_out,count;
+        char buf[256];
+        mm_segment_t fs;
+        fs = get_fs();
+        set_fs(get_ds());
+        if((fd_in=sys_open(file1,O_RDONLY,0)) == -1)    {
+            return 1;
+        }
+        if((fd_out=sys_open(file2,O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR))== -1){
+            return 2;
+        }
+        while((count = sys_read(fd_in,buf,256))>0)
+        {
+            if(sys_write(fd_out,buf,count)!= count)
+                return 3;
+        }
+        if(count == -1) return 4;
+        sys_close(fd_in);
+        sys_close(fd_out);
+        set_fs(fs);
+        return 0;
+ }

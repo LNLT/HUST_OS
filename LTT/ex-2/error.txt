@@ -1,0 +1,53 @@
+在make menuconfig时，提示：
+*** Unable to find the ncurses libraries or the
+ *** required header files.
+ *** 'make menuconfig' requires the ncurses libraries.
+ *** 
+ *** Install ncurses (ncurses-devel) and try again.
+ *** 
+make[1]: *** [scripts/kconfig/dochecklxdialog] Error 1
+make: *** [menuconfig] Error 2
+根据提示安装apt-get install ncurses ncurses devel时并不能安装。
+sudo apt-get install libncurses*
+
+
+scripts/kconfig/mconf Kconfig
+Your display is too small to run Menuconfig!
+It must be at least 19 lines by 80 columns.
+make[1]: *** [menuconfig] 错误 1
+make: *** [menuconfig] 错误 2
+终端窗口太小的，放大到最大就行了。就会启动配置窗口
+
+
+make bzImage编译内核出现错误
+scripts/sign-file.c:23:30: fatal error: openssl/opensslv.h: No such file or directory
+compilation terminated.
+scripts/Makefile.host:91: recipe for target 'scripts/sign-file' failed
+解决方案：
+使用sudo apt-get install libssl-dev来安装libssl-dev即可
+
+
+
+arch/x86/entry/syscall_64.o:(.rodata+0xa68)：对‘sys_copyfile’未定义的引用
+Makefile:1035: recipe for target 'vmlinux' failed
+在名字前面加__x64,并更改对应函数名
+
+
+硬件报错：
+1，进入如下这个地址，固件文件非常全面，找到适合自己的版本，
+https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/rtl_nic/
+2，切换到刚才报缺少固件的目录，下载区少的文件内容，
+cd /lib/firmware/rtl_nic/
+sudo wget https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/rtl_nic/rtl8125a-3.fw
+3，再次查看，
+sudo update-initramfs -u
+
+
+you need to load kernel first.
+更改系统BIOS里面的安全启动。
+
+
+
+
+
+
