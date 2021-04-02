@@ -1,0 +1,67 @@
+open：
+函数用来在进程中打开文件，如果成功则返回一个文件描述符fd。
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+int open(const char*pathname,int flags);
+int open(const char*pathname,int flags,mode_t mode);
+函数参数：
+    pathname：打开文件的路径名
+    flags：用来控制打开文件的模式
+    flags参数详解：
+	    O_RDONLY：只读模式
+	    O_WRONLY：只写模式
+	    O_RDWR：可读可写模式
+    上面三种模式在flags参数中不能同时出现但必须有一种出现，下面的参数是可选的。
+	    O_APPEND：以后每次写文件时都会先将当前文件偏移量设置到文件末尾，但是读文件时时不影响的
+	    O_CREAT：如果文件不存在则创建
+	    O_EXCL：要打开的文件如果存在则出错，必须要和O_CREAT参数一起使用
+	    O_TRUNC：打开文件的同时将文件中的内容清除
+	    O_NOCTTY：如果打开的文件是终端设备，则不将此设备设置为进程的控制终端
+	    O_NONBLOCK：如果打开的文件是一个管道、一个块设备文件或一个字符设备文件，则后续的I/O操作均设置为非阻塞方式
+	    O_SYNC：使每次write都等到物理I/O操作完成，包括由该write操作引起的文件属性更新所需的I/O。
+    mode：用来设置创建文件的权限（rwx）。当flags中带有O_CREAT时才有效。可以 $man open 然后有以下内容  
+	00400  S_IRUSR    文件所有者有读权限                
+	00200  S_IWUSR                 写                
+	00040  S_IRGRP    组用户有读权限                
+	00004  S_IROTH    其他用户有读权限这些字段按位OR后就得到 
+	00644也就是创建的文件要满足这些要求。 
+
+返回值：
+    调用成功时返回一个文件描述符fd
+    调用失败时返回-1,并修改errno
+
+
+close：
+头文件：#include<unistd.h>
+int close(int fd)
+参数说明：
+ fd：是需要关闭的文件描述符
+成功：返回0；
+失败：返回-1，并设置errno
+
+
+read：
+#include<unistd.h>
+ssize_t read(int fd,void * buf ,size_t count);
+fd：所指文件
+buf：指定内存
+count：传送字节数
+返回值：为实际读取到的字节数，如果返回0，表示已到达文件尾或是无可读取的数据，此外文件读写位置会随读取到的字节移动。
+	有错误发生时则返回-1，错误代码存入errno中
+
+
+write：
+#include<unistd.h>
+ssize_t write (int fd,const void * buf,size_t count);
+fd：所指文件
+buf：指定内存
+count：写入字节数
+返回值：返回实际写入的字节数。当有错误发生时则返回-1，错误代码存入errno中。
+
+perror:
+#include<stdio.h> 　　
+#include<stdlib.h>
+void perror(const char *s);
+perror ( )用 来 将 上 一 个 函 数 发 生 错 误 的 原 因 输 出 到 标 准 设备 (stderr) 。参数 s 所指的字符串会先打印出,后面再加上错误原因字符串。
+
